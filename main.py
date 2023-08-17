@@ -5,8 +5,8 @@ import uvicorn
 
 app = FastAPI()
 
-# Configuration du logging
-logging.basicConfig(filename="requests.log", level=logging.INFO)
+# Configuration du logging pour afficher les informations dans la console
+logging.basicConfig(level=logging.INFO)
 
 @app.middleware("http")
 async def log_requests(request: Request, call_next):
