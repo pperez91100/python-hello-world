@@ -1,12 +1,9 @@
-from fastapi import FastAPI, Request
-import logging
+from fastapi import FastAPI, Request, HTMLResponse
 import requests
 import uvicorn
+from fastapi.responses import HTMLResponse
 
 app = FastAPI()
-
-# Configuration du logging pour afficher les informations dans la console
-logging.basicConfig(level=logging.INFO)
 
 @app.middleware("http")
 async def log_requests(request: Request, call_next):
@@ -14,7 +11,8 @@ async def log_requests(request: Request, call_next):
     public_ip = get_public_ip()
     request_method = request.method
     request_url = request.url.path
-    logging.info(f"IP: {client_host} | Public IP: {public_ip} | Method: {request_method} | URL: {request_url}")
+    log_message = f"IP: {client_host} | Public IP: {public_ip} | Method: {request_method} | URL: {request_url}"
+    app.state.logs.append(log_message)  # Ajoutez le message au registre des logs
     response = await call_next(request)
     return response
 
@@ -26,9 +24,11 @@ def get_public_ip():
     except Exception as e:
         return "N/A"
 
-@app.get("/")
+@app.get("/", response_class=HTMLResponse)
 def read_root():
-    return {"message": "Hello, World!"}
+    logs = "<br>".join(app.state.logs)  # Obtenez les logs sous forme de chaîne HTML
+    return f"<html><body><h1>Logs:</h1><p>{logs}</p></body></html>"
 
 if __name__ == "__main__":
+    app.state.logs = []  # Initialisez la liste des logs dans l'état de l'application
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
