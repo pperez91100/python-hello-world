@@ -1,21 +1,9 @@
 from fastapi import FastAPI, Request
-from fastapi.middleware.cors import CORSMiddleware
 import logging
 import requests
+import uvicorn
 
 app = FastAPI()
-
-# Configuration pour autoriser tous les domaines en CORS (à ajuster en fonction de vos besoins en sécurité)
-origins = ["python-hello-world-theta-gold.vercel.app"]
-
-# Ajouter le middleware CORS
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 # Configuration du logging
 logging.basicConfig(filename="requests.log", level=logging.INFO)
@@ -41,3 +29,6 @@ def get_public_ip():
 @app.get("/")
 def read_root():
     return {"message": "Hello, World!"}
+
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
