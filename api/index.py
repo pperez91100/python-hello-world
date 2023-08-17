@@ -6,7 +6,7 @@ import requests
 app = FastAPI()
 
 # Configuration pour autoriser tous les domaines en CORS (à ajuster en fonction de vos besoins en sécurité)
-origins = ["https://python-hello-world-roan-nine.vercel.app/", "http://localhost:3000"]
+origins = ["https://python-hello-world-roan-nine.vercel.app", "http://localhost:3000"]
 
 # Ajouter le middleware CORS
 app.add_middleware(
@@ -38,6 +38,6 @@ def get_public_ip():
     except Exception as e:
         return "N/A"
 
-@app.get("/")
+@app.get("/api")
 def read_root():
     return {"message": "Hello, World!"}
